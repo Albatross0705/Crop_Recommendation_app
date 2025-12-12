@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #b6efcc;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #197a04;
+            font-weight: 700;
+        }
+        .form-container {
+            background-color: #f9fbfa;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .form-control {
+            border: 1px solid #1fa24b;
+            border-radius: 4px;
+        }
+        .form-control:focus {
+            border-color: #0fba37;
+            box-shadow: 0 0 0 0.2rem rgba(8, 189, 74, 0.25);
+        }
+        .result-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .badge {
+            font-size: 1.5rem;
+            padding: 10px 15px;
+        }
+        .footer {
+            background-color: #30c90a;
+            color: rgb(255, 255, 255);
+            padding: 20px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .navbar-brand img {
+            margin-right: 50px;
+        }
+        .navbar-nav .nav-link {
+            color: #0bd25a;
+            margin: 0 10px;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #0cb73f;
+        }
+        @media (max-width: 768px) {
+            .form-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='agriculture logo l.png') }}" alt="Logo" width="50" height="50" class="me-2">
+            <span class="fw-bold" style="font-size: 1.2rem;">Farmers Helper System</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Home </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}" href="{{ url_for('about') }}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Logo Above Header -->
+<div class="text-center mb-2">
+    <img src="static/agriculture logo l.png" alt="Logo" width="300" height="300" class="mb-1">
+</div>
+<h1 class="text-center" style="font-size: 2.5rem;">Hey! How Can I Help You?</h1>
+<h2 class="text-center" style="font-size: 2rem; color: #197a04; font-weight: 600;">शेतकरी मित्र</h2>
+
+<!-- Row to display the 3 containers -->
+<div class="row">
+   <!-- 🌾 Crop Recommendation -->
+<div class="col-md-4 mb-4">
+    <div class="form-container p-4 border rounded shadow-sm bg-light">
+        <h4 class="text-center mb-3">🌱 Crop Recommendation</h4>
+
+        <!-- Crop Recommendation Form -->
+        <form action="/crop_recommendation" method="post">
+            <div class="mb-3">
+                <label for="N" class="form-label">🧪 Nitrogen (N):</label>
+                <input type="number" name="N" class="form-control" step="0.01" required placeholder="Enter nitrogen level">
+            </div>
+
+            <div class="mb-3">
+                <label for="P" class="form-label">🧪 Phosphorus (P):</label>
+                <input type="number" name="P" class="form-control" step="0.01" required placeholder="Enter phosphorus level">
+            </div>
+
+            <div class="mb-3">
+                <label for="K" class="form-label">🧪 Potassium (K):</label>
+                <input type="number" name="K" class="form-control" step="0.01" required placeholder="Enter potassium level">
+            </div>
+
+            <div class="mb-3">
+                <label for="humidity" class="form-label">💧 Humidity (%):</label>
+                <input type="number" name="humidity" class="form-control" step="0.01" required placeholder="Enter humidity level">
+            </div>
+
+            <div class="mb-3">
+                <label for="ph" class="form-label">🌍 Soil pH:</label>
+                <input type="number" name="ph" class="form-control" step="0.01" required placeholder="Enter soil pH">
+            </div>
+
+            <div class="mb-3">
+                <label for="temperature_category" class="form-label">🌡 Temperature Category:</label>
+                <select name="temperature_category" class="form-select" required>
+                    <option value="Select Option">Select Option</option>
+                    <option value="Cool">❄️ Cool</option>
+                    <option value="Mild">🌤 Mild</option>
+                    <option value="Warm">☀️ Warm</option>
+                    <option value="Hot">🔥 Hot</option>
+                    <option value="Very Hot">🥵 Very Hot</option>
+                    <option value="Extreme Heat">🌋 Extreme Heat</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="rainfall_category" class="form-label">🌧 Rainfall Category:</label>
+                <select name="rainfall_category" class="form-select" required>
+                    <option value="Select Option">Select Option</option>
+                    <option value="No Rain">🚫 No Rain</option>
+                    <option value="Light Rain">🌦 Light Rain</option>
+                    <option value="Moderate Rain">🌧 Moderate Rain</option>
+                    <option value="Heavy Rain">⛈ Heavy Rain</option>
+                    <option value="Very Heavy Rain">🌊 Very Heavy Rain</option>
+                    <option value="Extreme Rain">🌪 Extreme Rain</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">🌾 Recommend Crop</button>
+        </form>
+
+        <!-- Recommended Crop Result -->
+        <div class="result-section mt-4 p-3 border rounded bg-white">
+            {% if crop_result %}
+                <h4 class="text-center text-success">🌟 Recommended Crop</h4>
+                <p class="text-center">
+                    <strong>🌿 Crop:</strong> <span class="badge bg-success fs-5">{{ crop_result }}</span>
+                </p>
+                <div class="text-center">
+                    <img src="{{ url_for('static', filename=crop_result|lower ~ '.jpeg') }}" alt="{{ crop_result }}" class="img-fluid mt-2 rounded shadow-sm" style="max-width: 150px;">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+    <!-- Yield Predictor -->
+    <div class="col-md-4 mb-4">
+        <div class="form-container p-4 border rounded shadow-sm bg-light">
+            <h4 class="text-center mb-3">🌾 Yield Predictor</h4>
+    
+            <!-- Yield Prediction Form -->
+            <form action="/yield_prediction" method="post">
+                <div class="mb-3">
+                    <label for="Region" class="form-label">🌍 Region:</label>
+                    <select name="Region" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="West">West</option>
+                        <option value="South">South</option>
+                        <option value="North">North</option>
+                        <option value="East">East</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Soil_Type" class="form-label">🌱 Soil Type:</label>
+                    <select name="Soil_Type" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="Sandy">Sandy</option>
+                        <option value="Clay">Clay</option>
+                        <option value="Loam">Loam</option>
+                        <option value="Silt">Silt</option>
+                        <option value="Peaty">Peaty</option>
+                        <option value="Chalky">Chalky</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Crop" class="form-label">🌾 Crop:</label>
+                    <input type="text" name="Crop" class="form-control" required placeholder="Enter crop name">
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Rainfall_mm" class="form-label">🌧 Rainfall (mm):</label>
+                    <input type="number" name="Rainfall_mm" class="form-control" step="0.01" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Temperature_Celsius" class="form-label">🌡 Temperature (°C):</label>
+                    <input type="number" name="Temperature_Celsius" class="form-control" step="0.01" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Fertilizer_Used" class="form-label">🌿 Fertilizer Used:</label>
+                    <select name="Fertilizer_Used" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="False">No</option>
+                        <option value="True">Yes</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Irrigation_Used" class="form-label">🚰 Irrigation Used:</label>
+                    <select name="Irrigation_Used" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="True">Yes</option>
+                        <option value="False">No</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Weather_Condition" class="form-label">⛅ Weather Condition:</label>
+                    <select name="Weather_Condition" class="form-select" required>
+                        <option value="">Select Option</option>
+                        <option value="Cloudy">Cloudy</option>
+                        <option value="Rainy">Rainy</option>
+                        <option value="Sunny">Sunny</option>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="Days_to_Harvest" class="form-label">📅 Days to Harvest:</label>
+                    <input type="number" name="Days_to_Harvest" class="form-control" step="1" required>
+                </div>
+    
+                <button type="submit" class="btn btn-primary w-100">🔍 Predict Yield</button>
+            </form>
+    
+            <!-- Yield Prediction Result -->
+            <div class="result-section mt-4 p-3 border rounded bg-white">
+                {% if yield_result %}
+                    <h4 class="text-center text-success">🌾 Predicted Yield</h4>
+                    <p class="text-center">
+                        <strong>Yield:</strong> <span class="badge bg-warning fs-5">{{ yield_result }} tons/ha</span>
+                    </p>
+                {% endif %}
+    
+                {% if result and "Error" in result %}
+                    <div class="alert alert-danger text-center mt-3">
+                        <strong>⚠️ {{ result }}</strong>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+   <!-- 🌟 Ideal Rate Prediction -->
+<div class="col-md-4 mb-4">
+    <div class="form-container p-4 border rounded shadow-sm bg-light">
+        <h4 class="text-center mb-3">💰 Ideal Rate Prediction</h4>
+
+        <!-- Market Price Prediction Form -->
+        <form action="/market_price_prediction" method="post">
+            <div class="mb-3">
+                <label for="state" class="form-label">🏛 State:</label>
+                <input type="text" name="state" class="form-control" required placeholder="Enter state">
+            </div>
+
+            <div class="mb-3">
+                <label for="district" class="form-label">📍 District:</label>
+                <input type="text" name="district" class="form-control" required placeholder="Enter district">
+            </div>
+
+            <div class="mb-3">
+                <label for="market" class="form-label">🏪 Market:</label>
+                <input type="text" name="market" class="form-control" required placeholder="Enter market name">
+            </div>
+
+            <div class="mb-3">
+                <label for="commodity" class="form-label">🌾 Commodity:</label>
+                <input type="text" name="commodity" class="form-control" required placeholder="Enter commodity">
+            </div>
+
+            <div class="mb-3">
+                <label for="variety" class="form-label">🌱 Variety:</label>
+                <input type="text" name="variety" class="form-control" required placeholder="Enter variety">
+            </div>
+
+            <div class="mb-3">
+                <label for="min_price" class="form-label">💵 Min Price (INR):</label>
+                <input type="number" name="min_price" class="form-control" step="0.01" required placeholder="Enter min price">
+            </div>
+
+            <div class="mb-3">
+                <label for="max_price" class="form-label">💰 Max Price (INR):</label>
+                <input type="number" name="max_price" class="form-control" step="0.01" required placeholder="Enter max price">
+            </div>
+
+            <div class="mb-3">
+                <label for="arrival_day" class="form-label">📅 Arrival Day:</label>
+                <input type="number" name="arrival_day" class="form-control" step="1" required placeholder="Enter day">
+            </div>
+
+            <div class="mb-3">
+                <label for="arrival_month" class="form-label">📆 Arrival Month:</label>
+                <input type="number" name="arrival_month" class="form-control" step="1" required placeholder="Enter month">
+            </div>
+
+            <div class="mb-3">
+                <label for="arrival_year" class="form-label">🗓 Arrival Year:</label>
+                <input type="number" name="arrival_year" class="form-control" step="1" required placeholder="Enter year">
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">🔍 Predict Price</button>
+        </form>
+
+        <!-- Predicted Market Price Result -->
+        <div class="result-section mt-4 p-3 border rounded bg-white">
+            {% if price_result %}
+                <h4 class="text-center text-success">📈 Predicted Market Price</h4>
+                <p class="text-center">
+                    <strong>Price:</strong> <span class="badge bg-primary fs-5">{{ price_result }} INR</span>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <p>&copy; 2024 Crop Recommendation System. All rights reserved.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
